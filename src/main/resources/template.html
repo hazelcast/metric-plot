@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <th>
+        <select id="chart" name='select1' onchange="change()">
+            <option selected disabled>Choose</option>
+            $select
+            <!--<option value="c152">C152</option>-->
+            <!--<option value="c172">C172</option>-->
+        </select>
+    </th>
+
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script>
+              google.charts.load("current", {
+        packages: ["corechart"]
+      });
+
+      function change() {
+        var listbox = document.getElementById("chart");
+        var selIndex = listbox.selectedIndex;
+        var selValue = listbox.options[selIndex].value;
+        var selText = listbox.options[selIndex].text;
+        console.log(selValue);
+
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart(x, y) {
+          var datac152 = google.visualization.arrayToDataTable([
+            ['X', 'Y'],
+            [31, 1000],
+            [31, 1350],
+            [32.65, 1670],
+            [36.5, 1670],
+            [36.5, 1000]
+          ]);
+          var datac172 = google.visualization.arrayToDataTable([
+            ['X', 'Y'],
+            [35, 1500],
+            [35, 1950],
+            [38.65, 2300],
+            [47.3, 2300],
+            [47.3, 1500]
+          ]);
+          $data
+          var options = {
+            legend: 'none',
+            hAxis: {
+              title: 'Time',
+            },
+            vAxis: {
+              title: "Value"
+            },
+            explorer: {
+                actions: ['dragToZoom', 'rightClickToReset'],
+                axis: 'horizontal',
+                keepInBounds: true,
+                maxZoomIn: 40.0
+            },
+            colors: ['#009933'],
+            pointSize: 0,
+            title: '',
+            backgroundColor: '#eeeeee',
+            pointShape: 'circle'
+          };
+
+          var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+          y = options;
+          x = selValue;
+$handler
+          if (selValue == 'c152') {
+            x = datac152;
+          }
+          if (selValue == 'c172') {
+            x = datac172;
+          }
+          chart.draw(x, y);
+        }
+
+      }
+
+        </script>
+    </head>
+
+<body>
+<div id="chart_div" style="width: 1200px; height: 800px;"></div>
+</body>
+</body>
+
+</html>

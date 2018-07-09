@@ -1,0 +1,51 @@
+<html>
+<head>
+    <title>Metrics</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+         google.charts.load('current', {packages: ['corechart','line']});
+
+    </script>
+</head>
+
+<body>
+<div id="container" style="width: 1400px; height: 900px; margin: 0 auto">
+</div>
+<script language="JavaScript">
+         function drawChart() {
+            // Define the chart to be drawn.
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Time');
+            data.addColumn('number', 'Value');
+            data.addRows([
+               $data
+            ]);
+
+            // Set chart options
+            var options = {'title' : 'Value',
+               hAxis: {
+                  title: 'Time'
+               },
+               vAxis: {
+                  title: 'Value'
+               },
+               explorer: {
+                actions: ['dragToZoom', 'rightClickToReset'],
+                axis: 'horizontal',
+                keepInBounds: true,
+                maxZoomIn: 40.0
+                },
+               'width':1440,
+               'height':900,
+               curveType: 'function'
+            };
+
+            // Instantiate and draw the chart.
+            var chart = new google.visualization.LineChart(document.getElementById('container'));
+            chart.draw(data, options);
+         }
+         google.charts.setOnLoadCallback(drawChart);
+
+</script>
+</body>
+</html>
