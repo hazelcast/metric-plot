@@ -114,33 +114,22 @@ public class Metrics {
 
         Map<String, StringBuffer> map = new ConcurrentHashMap<>();
 
+        MetricsFilter filter = cli.filter();
+
         while (line != null) {
             if (line.contains("Metric")) {
 
-
-//                if (line.contains(metric)) {
-//                    lineCount++;
-//                    if(lineCount>5){
-//                        break;
-//                    }
                 String[] split = line.split(" ");
 
-
                 long time = Long.parseLong(split[2]);
-                if (cli.fromEpoch() <= time && cli.toEpoch() >= time) {
+                String[] metricKeyValue = split[3].split("=");
+                String metric = metricKeyValue[0].substring(7);
+                String value = metricKeyValue[1];
 
-                    String[] metricKeyValue = split[3].split("=");
-                    String metric = metricKeyValue[0].substring(7);
-                    String value = metricKeyValue[1];
-
+                if (cli.fromEpoch() <= time && cli.toEpoch() >= time && filter.test(metric)) {
                     StringBuffer sb = map.computeIfAbsent(metric, k -> new StringBuffer());
 
                     value = value.substring(0, value.length() - 1);
-
-
-                    // System.out.println(metric);
-
-                    //if(sb.length()<100) {
 
                     if (sb.length() > 0) {
                         sb.append(",");
@@ -148,7 +137,6 @@ public class Metrics {
 
                     sb.append("[new Date(").append(time).append("),").append(value).append("]");
                     sb.append("\n");
-                    //}
                 }
             }
             line = reader.readLine();

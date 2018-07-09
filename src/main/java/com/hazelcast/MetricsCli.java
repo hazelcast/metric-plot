@@ -27,6 +27,10 @@ public class MetricsCli {
             "The epoch time to end.")
             .withRequiredArg().ofType(String.class).defaultsTo("result.html");
 
+    private final OptionSpec<String> filterSpec = parser.accepts("filter",
+            "The filter on the metrics to select. E.g. 'foo.val*,bar.*'.")
+            .withRequiredArg().ofType(String.class).defaultsTo("*");
+
 //    private final NonOptionArgumentSpec<String> nonOptionArgumentSpec = parser.nonOptions().ofType(String.class);
 
     private final String[] args;
@@ -43,6 +47,10 @@ public class MetricsCli {
 
     public long toEpoch() {
         return optionSet.valueOf(toEpochSpec);
+    }
+
+    public MetricsFilter filter(){
+        return new MetricsFilter(optionSet.valueOf(filterSpec));
     }
 
     public File inputFile() throws IOException {
