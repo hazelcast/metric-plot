@@ -1,11 +1,15 @@
-package com.hazelcast;
+package com.hazelcast.metricplot;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -15,24 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Metrics {
+import static java.lang.String.format;
+
+public class MetricPlot {
+
+    public static void main(String[] args) throws IOException {
+        MetricPlot metrics = new MetricPlot(args);
+        metrics.render();
+    }
 
     private final MetricsCli cli;
 
-    public Metrics(String[] args) {
+    public MetricPlot(String[] args) {
         cli = new MetricsCli(args);
-    }
-
-    public static void main(String[] args) throws IOException {
-        for (String arg : args) {
-            System.out.println(arg);
-        }
-        System.out.println("--------");
-
-        Metrics metrics = new Metrics(args);
-        metrics.render();
-
-        // write your code here
     }
 
     private void render() throws IOException {
@@ -145,9 +144,24 @@ public class Metrics {
     }
 
     private static String loadTemplate() throws IOException {
-        ClassLoader classLoader = Metrics.class.getClassLoader();
-        File file = new File(classLoader.getResource("template.html").getFile());
-        byte[] encoded = Files.readAllBytes(file.toPath());
-        return new String(encoded, StandardCharsets.UTF_8);
+        ClassLoader classLoader = MetricPlot.class.getClassLoader();
+        String name = "/template.html";
+        InputStream stream = MetricPlot.class.getResourceAsStream(name);
+        if(stream == null){
+            throw new IOException(format("Failed to load resource '%s'",name));
+        }
+
+        StringBuilder textBuilder = new StringBuilder();
+        try (Reader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName(StandardCharsets.UTF_8.name())))) {
+            int c = 0;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+        }
+        return textBuilder.toString();
+//
+//        File file = new File(stream.getFile());
+//        byte[] encoded = Files.readAllBytes(file.toPath());
+//        return new String(encoded, StandardCharsets.UTF_8);
     }
 }

@@ -1,6 +1,5 @@
-package com.hazelcast;
+package com.hazelcast.metricplot;
 
-import joptsimple.NonOptionArgumentSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z "${METRIC_PLOT_HOME}" ] ; then
+    export METRIC_PLOT_HOME=$(cd $(dirname $(readlink -f $0 2> /dev/null || readlink $0 2> /dev/null || echo $0))/.. && pwd)
+fi
+
+export JAVA_OPTS="-server -Xms256m -Xmx8g ${JAVA_EXTRA_OPTS}"
+
+classpath=${METRIC_PLOT_HOME}/lib/*
+
+java -cp "$classpath" ${JAVA_OPTS} com.hazelcast.metricplot.MetricPlot "$@"
