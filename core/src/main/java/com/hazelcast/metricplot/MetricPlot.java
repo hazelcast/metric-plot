@@ -102,12 +102,17 @@ public class MetricPlot {
         String result = template.replace("$data", data);
         result = result.replace("$select", select);
         result = result.replace("$handler", selectHandler);
-        try (PrintStream out = new PrintStream(new FileOutputStream(cli.outputFile()))) {
+        File file = cli.outputFile();
+        System.out.println("Writing result to "+file.getAbsolutePath());
+        try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
             out.print(result);
         }
+
+
     }
 
     private Map<String, StringBuffer> generate(File file) throws IOException {
+        System.out.println("Loading diagnostics from "+file.getAbsolutePath());
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = reader.readLine();
 

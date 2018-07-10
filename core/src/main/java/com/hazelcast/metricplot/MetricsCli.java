@@ -30,14 +30,24 @@ public class MetricsCli {
             "The filter on the metrics to select. E.g. 'foo.val*,bar.*'.")
             .withRequiredArg().ofType(String.class).defaultsTo("*");
 
-//    private final NonOptionArgumentSpec<String> nonOptionArgumentSpec = parser.nonOptions().ofType(String.class);
+    private final OptionSpec<Void> helpSpec = parser.accepts("help",
+            "Show the help documentation.").forHelp();
 
     private final String[] args;
     private final OptionSet optionSet;
 
     public MetricsCli(String[] args) {
         this.args = args;
-        optionSet = parser.parse(args);
+        this.optionSet = parser.parse(args);
+
+        if (optionSet.has(helpSpec)) {
+            try {
+                parser.printHelpOn(System.out);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.exit(0);
+        }
     }
 
     public long fromEpoch() {
@@ -48,19 +58,21 @@ public class MetricsCli {
         return optionSet.valueOf(toEpochSpec);
     }
 
-    public MetricsFilter filter(){
+    public MetricsFilter filter() {
         return new MetricsFilter(optionSet.valueOf(filterSpec));
     }
 
-    public File inputFile() throws IOException {
+    public File inputFile() {
         List nonOptionArguments = optionSet.nonOptionArguments();
         if (nonOptionArguments.size() != 1) {
-            throw new IllegalArgumentException("One argument expected");
+            System.err.println("One argument expected");
+            System.exit(1);
         }
 
-        File file = new File((String)nonOptionArguments.get(0));
+        File file = new File((String) nonOptionArguments.get(0));
         if (!file.exists()) {
-            throw new IOException(format("Input file '%s' doesn't exist", file));
+           System.err.println(format("Input file '%s' doesn't exist", file));
+           System.exit(1);
         }
 
         return file;
