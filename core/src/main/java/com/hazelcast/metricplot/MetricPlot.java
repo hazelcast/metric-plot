@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MetricPlot {
 
@@ -57,14 +58,14 @@ public class MetricPlot {
 
         for (String name : keys) {
 
-            data.append("var data_" + name + " = google.visualization.arrayToDataTable([\n");
+            data.append("var data_").append(name).append(" = google.visualization.arrayToDataTable([\n");
             data.append("['X', 'Y'],\n");
             data.append(result.get(name));
             data.append("]);\n");
 
             select.append("   <option value=\"data_" + name + "\">" + escapeHTML(keyMapping.get(name)) + "</option>\n");
 
-            selectHandler.append("          if(selValue=='data_" + name + "'){x=data_" + name + ";}\n");
+            selectHandler.append("          if(selValue=='data_").append(name).append("'){x=data_").append(name).append(";}\n");
         }
 
         writeResult(data, select, selectHandler);
@@ -107,8 +108,6 @@ public class MetricPlot {
         try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
             out.print(result);
         }
-
-
     }
 
     private Map<String, StringBuffer> generate(File file) throws IOException {
@@ -149,7 +148,6 @@ public class MetricPlot {
     }
 
     private static String loadTemplate() throws IOException {
-        ClassLoader classLoader = MetricPlot.class.getClassLoader();
         String name = "/template.html";
         InputStream stream = MetricPlot.class.getResourceAsStream(name);
         if(stream == null){
@@ -157,16 +155,12 @@ public class MetricPlot {
         }
 
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
+        try (Reader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName(UTF_8.name())))) {
+            int c;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);
             }
         }
         return textBuilder.toString();
-//
-//        File file = new File(stream.getFile());
-//        byte[] encoded = Files.readAllBytes(file.toPath());
-//        return new String(encoded, StandardCharsets.UTF_8);
     }
 }
